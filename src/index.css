@@ -73,7 +73,7 @@ body {
 
 /* Layout */
 .game-container {
-  width: 120%;
+  width: 90%;
   max-width: min(960px, 92vw);
   max-height: 90vh;
   background: var(--bg-panel);
@@ -123,6 +123,15 @@ body {
   align-items: flex-end;
   border-bottom: 1px solid rgba(0, 242, 255, 0.3);
   padding-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 h1 {
@@ -390,4 +399,132 @@ h1 {
 @keyframes revealIn {
   from { transform: scale(0.5); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+/* ========== THEMES ========== */
+[data-theme="matrix"] {
+  --neon-cyan: #00ff41;
+  --neon-magenta: #00ff41;
+  --neon-red: #ff0040;
+  --terminal-green: #00ff41;
+  --text-dim: #008f11;
+  --bg-dark: #0a0a0a;
+  --bg-panel: #0d1f0d;
+  --grid-border: #003300;
+  --cell-hidden: #0d2d0d;
+  --cell-revealed: #051505;
+}
+
+[data-theme="amber"] {
+  --neon-cyan: #ffb000;
+  --neon-magenta: #ff8c00;
+  --neon-red: #ff4400;
+  --terminal-green: #ffb000;
+  --text-dim: #b8860b;
+  --bg-dark: #1a1508;
+  --bg-panel: #252015;
+  --grid-border: #4a3c20;
+  --cell-hidden: #2d2518;
+  --cell-revealed: #1c1810;
+}
+
+[data-theme="nuclear"] {
+  --neon-cyan: #ff4444;
+  --neon-magenta: #ff6600;
+  --neon-red: #ff1111;
+  --terminal-green: #33ff33;
+  --text-dim: #cc6633;
+  --bg-dark: #1a0808;
+  --bg-panel: #2a1515;
+  --grid-border: #4a2020;
+  --cell-hidden: #2d1818;
+  --cell-revealed: #1a0d0d;
+}
+
+/* Theme selector & Mute */
+.theme-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-selector-label {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.theme-selector-buttons {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.btn-theme {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.7rem;
+}
+
+.btn-icon {
+  padding: 0.4rem 0.6rem;
+  font-size: 1rem;
+  min-width: 40px;
+}
+
+/* ========== GAME OVER SCREEN EFFECTS ========== */
+.game-over-effect .game-container {
+  animation: screenShake 0.6s ease-out;
+}
+
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-6px, -4px); }
+  20% { transform: translate(6px, 4px); }
+  30% { transform: translate(-4px, 6px); }
+  40% { transform: translate(4px, -6px); }
+  50% { transform: translate(-6px, 4px); }
+  60% { transform: translate(6px, -4px); }
+  70% { transform: translate(-4px, -6px); }
+  80% { transform: translate(4px, 6px); }
+  90% { transform: translate(-2px, 2px); }
+}
+
+.game-over-flash {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 500;
+  background: rgba(255, 50, 50, 0.35);
+  animation: redFlash 0.8s ease-out forwards;
+}
+
+@keyframes redFlash {
+  0% { opacity: 1; }
+  40% { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+
+.game-over-static {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 501;
+  opacity: 0;
+  animation: staticFlicker 0.5s ease-out forwards;
+}
+
+.game-over-static::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.4;
+}
+
+@keyframes staticFlicker {
+  0% { opacity: 0.8; }
+  25% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+  75% { opacity: 0.2; }
+  100% { opacity: 0; }
 }

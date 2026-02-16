@@ -1,17 +1,33 @@
+import { useState, useEffect, useCallback } from 'react'
 import { Header } from './components/Header'
 import { Controls } from './components/Controls'
 import { StatsBar } from './components/StatsBar'
 import { Grid } from './components/Grid'
 import { TerminalFooter } from './components/TerminalFooter'
 import { Modal } from './components/Modal'
+import { ThemeSelector } from './components/ThemeSelector'
+import { MuteButton } from './components/MuteButton'
 import { useMinesweeper } from './hooks/useMinesweeper'
+import { useSound } from './hooks/useSound'
+import { getStoredTheme, setStoredTheme } from './themes'
 
 function App() {
+  const [theme, setThemeState] = useState(getStoredTheme)
+  const [gameOverEffect, setGameOverEffect] = useState(false)
+
+  const {
+    muted,
+    setMuted,
+    playReveal,
+    playFlag,
+    playExplosion,
+    playWin,
+  } = useSound()
+
   const {
     difficulty,
     setDifficulty,
     grid,
-    rows,
     cols,
     mines,
     flags,
@@ -22,15 +38,47 @@ function App() {
     startGame,
     handleCellClick,
     handleCellRightClick,
-  } = useMinesweeper()
+  } = useMinesweeper({
+    onReveal: playReveal,
+    onFlag: playFlag,
+    onExplosion: playExplosion,
+    onWin: playWin,
+  })
+
+  const setTheme = useCallback(value => {
+    setThemeState(value)
+    setStoredTheme(value)
+  }, [])
+
+  useEffect(() => {
+    if (modal?.title === 'MISSION_FAILED') {
+      setGameOverEffect(true)
+      const t = setTimeout(() => setGameOverEffect(false), 1500)
+      return () => clearTimeout(t)
+    }
+  }, [modal?.title])
 
   return (
-    <div className="terminal-theme">
+    <div
+      className={`terminal-theme ${gameOverEffect ? 'game-over-effect' : ''}`}
+      data-theme={theme}
+    >
+      {gameOverEffect && (
+        <>
+          <div className="game-over-flash" aria-hidden="true" />
+          <div className="game-over-static" aria-hidden="true" />
+        </>
+      )}
       <div className="scanlines" aria-hidden="true" />
       <div className="crt-overlay" aria-hidden="true" />
 
       <main className="game-container">
-        <Header />
+        <Header
+          muteButton={<MuteButton muted={muted} onToggle={() => setMuted(!muted)} />}
+          themeSelector={
+            <ThemeSelector theme={theme} onThemeChange={setTheme} />
+          }
+        />
         <Controls
           difficulty={difficulty}
           setDifficulty={setDifficulty}

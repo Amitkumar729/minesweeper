@@ -47,7 +47,8 @@ function calculateNeighbors(grid, rows, cols) {
   )
 }
 
-export function useMinesweeper() {
+export function useMinesweeper(soundCallbacks = {}) {
+  const { onReveal, onFlag, onExplosion, onWin } = soundCallbacks
   const [difficulty, setDifficultyState] = useState('easy')
   const [grid, setGrid] = useState([])
   const [flags, setFlags] = useState(0)
@@ -175,6 +176,7 @@ export function useMinesweeper() {
       if (timer === 0) startTimer()
 
       if (cell.isMine) {
+        onExplosion?.()
         stopTimer()
         setTriggerCell([r, c])
         setIsGameOver(true)
@@ -188,22 +190,24 @@ export function useMinesweeper() {
           )
         )
       } else {
+        onReveal?.()
         revealCellWithFlood(r, c)
       }
     },
-    [grid, isGameOver, timer, startTimer, stopTimer, revealCellWithFlood]
+    [grid, isGameOver, timer, startTimer, stopTimer, revealCellWithFlood, onReveal, onExplosion]
   )
 
   useEffect(() => {
     if (isGameOver || grid.length === 0) return
     const revealed = grid.flat().filter(c => c.isRevealed).length
     if (revealed === totalNonMines) {
+      onWin?.()
       stopTimer()
       setIsGameOver(true)
       setTerminalMessage('MISSION_SUCCESS: Sector cleared of all kinetic threats.')
       setModal({ title: 'MISSION_COMPLETE', message: 'All threats neutralized. Sector secure.' })
     }
-  }, [grid, isGameOver, totalNonMines, stopTimer])
+  }, [grid, isGameOver, totalNonMines, stopTimer, onWin])
 
   const handleCellRightClick = useCallback(
     (r, c) => {
@@ -218,6 +222,7 @@ export function useMinesweeper() {
           )
         )
       )
+      if (!cell.isFlagged) onFlag?.()
       setFlags(f => f + (cell.isFlagged ? -1 : 1))
       setTerminalMessage(
         cell.isFlagged
@@ -225,7 +230,7 @@ export function useMinesweeper() {
           : `Flag deployed at [${r},${c}]. Sensors detecting anomalies.`
       )
     },
-    [grid, isGameOver]
+    [grid, isGameOver, onFlag]
   )
 
   const setDifficulty = useCallback(level => {
