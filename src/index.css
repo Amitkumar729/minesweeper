@@ -73,8 +73,9 @@ body {
 
 /* Layout */
 .game-container {
-  width: 90%;
-  max-width: 800px;
+  width: 120%;
+  max-width: min(960px, 92vw);
+  max-height: 90vh;
   background: var(--bg-panel);
   border: 2px solid var(--neon-cyan);
   padding: 2rem;
@@ -84,6 +85,35 @@ body {
   gap: 1.5rem;
   position: relative;
   z-index: 10;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Scrollable area for grid so Level 2/3 don't overflow the panel */
+.grid-wrapper {
+  overflow: auto;
+  max-height: min(55vh, 520px);
+  min-height: 0;
+  margin: 0 -0.25rem;
+  padding: 0 0.25rem;
+}
+
+.grid-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.grid-wrapper::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.grid-wrapper::-webkit-scrollbar-thumb {
+  background: var(--neon-cyan);
+  border-radius: 4px;
+}
+
+.grid-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-magenta);
 }
 
 /* Header & Glitch */
@@ -238,6 +268,8 @@ h1 {
   padding: 4px;
   border: 1px solid var(--grid-border);
   user-select: none;
+  width: max-content;
+  min-width: 0;
 }
 
 .cell {

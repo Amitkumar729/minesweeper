@@ -37,15 +37,17 @@ function App() {
           onReset={startGame}
         />
         <StatsBar mines={mines} timer={timer} flags={flags} />
-        {grid.length > 0 && (
-          <Grid
-            grid={grid}
-            cols={cols}
-            triggerCell={triggerCell}
-            onCellClick={handleCellClick}
-            onCellRightClick={handleCellRightClick}
-          />
-        )}
+        <div className="grid-wrapper">
+          {grid.length > 0 && (
+            <Grid
+              grid={grid}
+              cols={cols}
+              triggerCell={triggerCell}
+              onCellClick={handleCellClick}
+              onCellRightClick={handleCellRightClick}
+            />
+          )}
+        </div>
         <TerminalFooter message={terminalMessage} />
       </main>
 
