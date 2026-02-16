@@ -7,62 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="terminal-theme">
-    <div class="scanlines"></div>
-    <div class="crt-overlay"></div>
-    
-    <main class="game-container">
-        <header class="terminal-header">
-            <h1 class="glitch" data-text="NEON_SWEEPER">NEON_SWEEPER</h1>
-            <div class="system-status">
-                <span class="status-item">LOC: <span id="location">SECTOR_07</span></span>
-                <span class="status-item">OS: <span id="os-ver">KROM_OS_v4.2</span></span>
-            </div>
-        </header>
-
-        <section class="controls-panel">
-            <div class="difficulty-selectors">
-                <button class="btn btn-diff active" data-difficulty="easy">LEVEL_01</button>
-                <button class="btn btn-diff" data-difficulty="medium">LEVEL_02</button>
-                <button class="btn btn-diff" data-difficulty="hard">LEVEL_03</button>
-            </div>
-            <button id="reset-btn" class="btn btn-main">INITIALIZE_SWEEP</button>
-        </section>
-
-        <section class="stats-bar">
-            <div class="stat-box">
-                <label>MINES_DETECTED</label>
-                <div id="mine-count" class="stat-value">000</div>
-            </div>
-            <div class="stat-box">
-                <label>ELAPSED_TIME</label>
-                <div id="timer" class="stat-value">000</div>
-            </div>
-            <div class="stat-box">
-                <label>FLAGS_DEPLOYED</label>
-                <div id="flag-count" class="stat-value">000</div>
-            </div>
-        </section>
-
-        <div id="game-grid" class="grid-container">
-            <!-- Grid will be generated via JS -->
-        </div>
-
-        <footer class="terminal-footer">
-            <div class="terminal-prompt">> <span class="typing-text">System ready. Awaiting user input...</span><span class="cursor">_</span></div>
-        </footer>
-    </main>
-
-    <div id="modal-overlay" class="modal-overlay hidden">
-        <div class="modal-content">
-            <h2 id="modal-title">MISSION_COMPLETE</h2>
-            <p id="modal-message">All threats neutralized. Sector secure.</p>
-            <button id="modal-restart" class="btn btn-main">REBOOT_SYSTEM</button>
-        </div>
-    </div>
-
-    <script src="game.js"></script>
+<body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
