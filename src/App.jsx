@@ -1,15 +1,17 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react'
 import { Header } from './components/Header'
 import { Controls } from './components/Controls'
 import { StatsBar } from './components/StatsBar'
 import { Grid } from './components/Grid'
 import { TerminalFooter } from './components/TerminalFooter'
-import { Modal } from './components/Modal'
 import { ThemeSelector } from './components/ThemeSelector'
 import { MuteButton } from './components/MuteButton'
 import { useMinesweeper } from './hooks/useMinesweeper'
 import { useSound } from './hooks/useSound'
 import { getStoredTheme, setStoredTheme } from './themes'
+import './lib/firebase'
+
+const Modal = lazy(() => import('./components/Modal').then(m => ({ default: m.Modal })))
 
 function App() {
   const [theme, setThemeState] = useState(getStoredTheme)
@@ -38,12 +40,17 @@ function App() {
     startGame,
     handleCellClick,
     handleCellRightClick,
-  } = useMinesweeper({
-    onReveal: playReveal,
-    onFlag: playFlag,
-    onExplosion: playExplosion,
-    onWin: playWin,
-  })
+  } = useMinesweeper(
+    useMemo(
+      () => ({
+        onReveal: playReveal,
+        onFlag: playFlag,
+        onExplosion: playExplosion,
+        onWin: playWin,
+      }),
+      [playReveal, playFlag, playExplosion, playWin]
+    )
+  )
 
   const setTheme = useCallback(value => {
     setThemeState(value)
@@ -99,12 +106,14 @@ function App() {
         <TerminalFooter message={terminalMessage} />
       </main>
 
-      <Modal
-        show={!!modal}
-        title={modal?.title}
-        message={modal?.message}
-        onRestart={startGame}
-      />
+      <Suspense fallback={null}>
+        <Modal
+          show={!!modal}
+          title={modal?.title}
+          message={modal?.message}
+          onRestart={startGame}
+        />
+      </Suspense>
     </div>
   )
 }

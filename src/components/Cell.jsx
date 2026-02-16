@@ -1,4 +1,6 @@
-export function Cell({
+import { memo } from 'react'
+
+function CellComponent({
   cell,
   row,
   col,
@@ -51,3 +53,5 @@ export function Cell({
     </div>
   )
 }
+
+export const Cell = memo(CellComponent)

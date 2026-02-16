@@ -3,6 +3,11 @@ import * as sounds from '../utils/sounds'
 
 const STORAGE_KEY = 'neon-sweeper-mute'
 
+/**
+ * Hook for game sound effects and mute state (persisted to localStorage).
+ * @returns {{ muted: boolean, setMuted: (v: boolean) => void, playReveal: () => void, playFlag: () => void, playExplosion: () => void, playWin: () => void }}
+ */
+
 function getStoredMute() {
   try {
     return localStorage.getItem(STORAGE_KEY) === 'true'

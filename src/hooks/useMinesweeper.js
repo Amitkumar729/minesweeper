@@ -1,52 +1,17 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { CONFIG } from '../config'
+import {
+  createEmptyGrid,
+  placeMines,
+  calculateNeighbors,
+  applyFloodReveal,
+} from '../utils/gameLogic'
 
-function createEmptyGrid(rows, cols) {
-  return Array.from({ length: rows }, () =>
-    Array.from({ length: cols }, () => ({
-      isMine: false,
-      isRevealed: false,
-      isFlagged: false,
-      neighborMines: 0,
-    }))
-  )
-}
-
-function placeMines(grid, rows, cols, mines) {
-  const next = grid.map(row => row.map(cell => ({ ...cell })))
-  let placed = 0
-  while (placed < mines) {
-    const r = Math.floor(Math.random() * rows)
-    const c = Math.floor(Math.random() * cols)
-    if (!next[r][c].isMine) {
-      next[r][c].isMine = true
-      placed++
-    }
-  }
-  return next
-}
-
-function countNeighbors(grid, rows, cols, r, c) {
-  let count = 0
-  for (let i = -1; i <= 1; i++) {
-    for (let j = -1; j <= 1; j++) {
-      const rr = r + i
-      const cc = c + j
-      if (rr >= 0 && rr < rows && cc >= 0 && cc < cols && grid[rr][cc].isMine) count++
-    }
-  }
-  return count
-}
-
-function calculateNeighbors(grid, rows, cols) {
-  return grid.map((row, r) =>
-    row.map((cell, c) => ({
-      ...cell,
-      neighborMines: cell.isMine ? 0 : countNeighbors(grid, rows, cols, r, c),
-    }))
-  )
-}
-
+/**
+ * Minesweeper game state and handlers.
+ * @param {Object} [soundCallbacks] - Optional { onReveal, onFlag, onExplosion, onWin } called on actions.
+ * @returns Game state and handlers for the UI.
+ */
 export function useMinesweeper(soundCallbacks = {}) {
   const { onReveal, onFlag, onExplosion, onWin } = soundCallbacks
   const [difficulty, setDifficultyState] = useState('easy')
@@ -136,33 +101,9 @@ export function useMinesweeper(soundCallbacks = {}) {
     [rows, cols]
   )
 
-  // Flood-fill: after state update we need to reveal all connected zeros. Do it in a single setGrid that does full flood.
   const revealCellWithFlood = useCallback(
     (r, c) => {
-      setGrid(prev => {
-        const stack = [[r, c]]
-        const next = prev.map(row => row.map(cell => ({ ...cell })))
-        const seen = new Set()
-        const key = (rr, cc) => `${rr},${cc}`
-
-        while (stack.length) {
-          const [rr, cc] = stack.pop()
-          if (rr < 0 || rr >= rows || cc < 0 || cc >= cols) continue
-          if (seen.has(key(rr, cc))) continue
-          const cell = next[rr][cc]
-          if (cell.isRevealed || cell.isFlagged) continue
-          seen.add(key(rr, cc))
-          next[rr][cc] = { ...cell, isRevealed: true }
-          if (cell.neighborMines === 0) {
-            for (let i = -1; i <= 1; i++) {
-              for (let j = -1; j <= 1; j++) {
-                stack.push([rr + i, cc + j])
-              }
-            }
-          }
-        }
-        return next
-      })
+      setGrid(prev => applyFloodReveal(prev, rows, cols, r, c))
     },
     [rows, cols]
   )

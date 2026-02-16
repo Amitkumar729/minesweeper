@@ -1,6 +1,7 @@
+import { memo } from 'react'
 import { Cell } from './Cell'
 
-export function Grid({ grid, cols, triggerCell, onCellClick, onCellRightClick }) {
+function GridComponent({ grid, cols, triggerCell, onCellClick, onCellRightClick }) {
   return (
     <div
       className="grid-container"
@@ -26,3 +27,5 @@ export function Grid({ grid, cols, triggerCell, onCellClick, onCellRightClick })
     </div>
   )
 }
+
+export const Grid = memo(GridComponent)
